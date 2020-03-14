@@ -2,6 +2,7 @@ class RootController < ApplicationController
   include ActionView::Helpers::NumberHelper
   
   def ticker
+    StatsD.increment("ticker.hit")
     info = Market.get(params[:ticker])
     if info.nil?
       render body: "Unknown ticker \"#{params[:ticker]}\"\r\n"
