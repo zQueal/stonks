@@ -1,0 +1,18 @@
+<html>
+	<body style="background-color: black; color: white; font-family: sans-serif; margin: 20%;">
+		<h1 style="text-align: center">Stonks - A curlable stock market viewer</h1>
+
+		$ curl stonks.scd31.com/AAPL<br>
+		<span style="color: #00FF00">AAPL: $277.97 +11.98%</span><br>
+		<br>
+		$ curl stonks.scd31.com/TSLA<br>
+		<span style="color: #FF0000">TSLA: $546.62 -2.48%</span><br>
+		<br>
+		i3blocks compatibility<br>
+		<code>
+			[AMD]<br>
+			command=curl -Ss 'https://stonks.scd13.com/AMD?f=i3'<br>
+			interval=300
+		</code>
+	</body>
+</html>
