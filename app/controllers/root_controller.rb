@@ -8,17 +8,32 @@ class RootController < ApplicationController
       render body: "Unknown ticker \"#{params[:ticker]}\"\r\n"
       return
     end
+
     s = "#{params[:ticker]}: #{number_to_currency(info.latest_price)} #{info.change_percent_s}\n"
+
+    if info.change_percent.nil?
+      render body: s
+      return
+    end
+    
     if params[:f] == "i3"
       ticker_i3(s, info.change_percent)
       return
     end
+
     if info.change_percent > 0
       s = green s
     elsif info.change_percent < 0
       s = red s
     end
     render body: s
+  end
+
+  def crypto
+    fiat = ERB::Util.url_encode params[:fiat]
+    crypt = ERB::Util.url_encode params[:crypto]
+    info = Market.get "#{crypt}#{fiat}T"
+    render body: "#{crypt}: #{number_to_currency(info.latest_price)} #{fiat}\n"
   end
 
   private
