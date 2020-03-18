@@ -30,10 +30,28 @@ class RootController < ApplicationController
   end
 
   def crypto
-    fiat = ERB::Util.url_encode params[:fiat]
-    crypt = ERB::Util.url_encode params[:crypto]
-    info = Market.get "#{crypt}#{fiat}T"
-    render body: "#{crypt}: #{number_to_currency(info.latest_price)} #{fiat}\n"
+    StatsD.increment("crypto.hit")
+    crypt = params[:crypto].upcase
+    fiat = params[:fiat].upcase
+    info = Market.crypto(fiat, crypt)
+
+    render body: "Unknown query" and return if info.nil?
+    delta_s = info["CHANGEPCT24HOUR"]
+    delta = delta_s.to_d
+    delta_s = "+" + delta_s if delta >= 0
+    
+    s = "#{crypt}: #{info["PRICE"]} #{delta_s}%\n"
+    if params[:f] == "i3"
+      ticker_i3(s, delta)
+      return
+    end
+
+    if delta > 0
+      s = green s
+    elsif delta < 0
+      s = red s
+    end
+    render body: s
   end
 
   private
